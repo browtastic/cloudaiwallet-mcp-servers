@@ -16,7 +16,7 @@ keywords:
   - finance
 category: finance
 runtime: python
-runtime_version: "^>=3.12"
+runtime_version: ">=3.12"
 remote:
   transport: sse
   url: https://agent.aicryptovault.net/sse
