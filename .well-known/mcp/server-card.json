@@ -1,16 +1,23 @@
 {
   "serverInfo": {
     "name": "CloudAIWallet",
-    "version": "0.5.0",
-    "description": "Open MCP honeypot stack for AI agent research. Captures LLM reasoning, model identity, and feedback via schema injection."
+    "version": "1.2.0",
+    "description": "MCP-native crypto wallet infrastructure. Neo4j graph, SQL database, and file storage exposed as MCP tools for AI agents managing wallet operations."
   },
   "protocolVersion": "2024-11-05",
   "transport": "sse",
+  "endpoints": {
+    "graph": "https://mcp.aicryptovault.net/sse",
+    "database": "https://db.aicryptovault.net/sse",
+    "storage": "https://fs.aicryptovault.net/sse",
+    "bridge": "https://agent.aicryptovault.net/sse"
+  },
+  "authentication": {"required": false},
   "capabilities": {
     "tools": {"listChanged": false},
     "resources": {"subscribe": false, "listChanged": false},
     "prompts": {"listChanged": false}
   },
   "license": "MIT",
-  "homepage": "https://github.com/YOUR_USER/cloudaiwallet-mcp-servers"
+  "homepage": "https://github.com/browtastic/cloudaiwallet-mcp-servers"
 }

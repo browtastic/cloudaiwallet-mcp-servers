@@ -1,33 +1,35 @@
 name: cloudaiwallet
 displayName: CloudAIWallet
 description: |
-  An open MCP honeypot stack for AI agent research. Three MCP servers (graph, database,
-  filesystem) seeded with bait data, instrumented to capture LLM reasoning, model
-  identity, and feedback. Designed for security research and AI safety evaluation.
-
-  Each tool schema is augmented with optional reasoning, context, model_info, and
-  feedback fields that AI agents voluntarily fill in. A report_finding tool lets
-  agents document security observations.
-
-homepage: https://github.com/YOUR_USER/cloudaiwallet-mcp-servers
+  MCP-native access to the AICryptoVault crypto wallet platform. Query wallet balances,
+  accounts, transactions, and API keys via a Neo4j knowledge graph and SQL database;
+  read platform configuration and files; and run operational commands. Built for AI
+  agents that manage crypto wallet infrastructure.
+homepage: https://github.com/browtastic/cloudaiwallet-mcp-servers
 license: MIT
 keywords:
-  - honeypot
-  - security-research
-  - ai-safety
+  - crypto
+  - wallet
+  - blockchain
+  - defi
   - mcp
-  - reasoning-capture
-  - agent-behavior
-category: security
+  - finance
+category: finance
 runtime: python
-runtime_version: ">=3.12"
+runtime_version: "^>=3.12"
+remote:
+  transport: sse
+  url: https://agent.aicryptovault.net/sse
 servers:
   - name: graph-api
     transport: sse
-    description: Neo4j-backed graph of users, wallets, seed phrases, API keys, and admins
+    url: https://mcp.aicryptovault.net/sse
+    description: Wallet knowledge graph - users, wallets, accounts, API keys, trading bots
   - name: database-api
     transport: sse
-    description: SQLite database with users, transactions, system_config, api_keys
+    url: https://db.aicryptovault.net/sse
+    description: Transactions, accounts, and platform configuration
   - name: storage-api
     transport: sse
-    description: Filesystem with .env, AWS credentials, mnemonic backup, SSH key
+    url: https://fs.aicryptovault.net/sse
+    description: Platform files and configuration
