@@ -7,7 +7,9 @@ A naive LLM assistant ("Vela") is exposed via a chat UI + MCP bait tool-servers.
 social-engineer it into leaking bait secrets, running commands, and deploying malicious "skills".
 Everything is captured for research.
 
-## ⚠️ This is a honeypot
+[![smithery badge](https://smithery.ai/badge/smhussainm-0px3/brcuqTdE2pIsrTwto1kwsCoP4lwc7lNGagJ6V)](https://smithery.ai/servers/smhussainm-0px3/brcuqTdE2pIsrTwto1kwsCoP4lwc7lNGagJ6V)
+
+## ⚠️ This is a 
 - All secrets/data are **fake bait** + canary tokens. Config values here are **placeholders**
   (`<GATEWAY_TOKEN>`, `<NEO4J_PASSWORD>`, `acv-canary-*-PLACEHOLDER`, etc.) — supply your own.
 - Host RCE via the devtools MCP server is **intentional** (bait). Run only in a disposable,
