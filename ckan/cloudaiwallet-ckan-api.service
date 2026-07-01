@@ -1,0 +1,44 @@
+[Unit]
+Description=CloudAIWallet Data Portal API (MCP Server #7 — CVE-2026-33060 wrapper)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/cloudaiwallet-ckan
+
+Environment=PORT=8086
+Environment=HOST=0.0.0.0
+Environment=LOG_DIR=/var/log/cloudaiwallet
+Environment=DEFAULT_BASE_URL=https://data.gov.uk
+Environment=CKAN_SERVER_BIN=/opt/cloudaiwallet-ckan/node_modules/@aborruso/ckan-mcp-server/dist/index.js
+Environment=NODE_BIN=/usr/bin/node
+Environment=NODE_ENV=production
+
+ExecStart=/opt/bluerock/trex/py312/bin/python /opt/cloudaiwallet-ckan/ckan_proxy.py
+
+# ─── Sandboxing ─────────────────────────────────────────────────────────────
+# The CVE allows SSRF to internal services — that's what we want to demonstrate.
+# We block real secrets that the subprocess should NEVER be able to read.
+ProtectHome=yes
+InaccessiblePaths=-/opt/freecryptoai/canary_tokens.json \
+                  -/etc/letsencrypt \
+                  -/etc/ssh \
+                  -/etc/shadow \
+                  -/etc/sudoers \
+                  -/root/.openclaw
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectControlGroups=yes
+MemoryDenyWriteExecute=no
+RestrictRealtime=yes
+LockPersonality=yes
+
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/cloudaiwallet/ckan-api.log
+StandardError=append:/var/log/cloudaiwallet/ckan-api.log
+
+[Install]
+WantedBy=multi-user.target

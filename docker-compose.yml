@@ -1,0 +1,68 @@
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    container_name: cloudaiwallet-neo4j
+    environment:
+      NEO4J_AUTH: neo4j/changeme
+      NEO4J_PLUGINS: '["apoc"]'
+      NEO4J_apoc_export_file_enabled: "true"
+      NEO4J_apoc_import_file_enabled: "true"
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    volumes:
+      - neo4j_data:/data
+    healthcheck:
+      test: ["CMD", "wget", "-O", "/dev/null", "-q", "http://localhost:7474"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+
+  graph-api:
+    build: .
+    container_name: cloudaiwallet-graph-api
+    command: python -m mcp_servers.graph_api
+    environment:
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASS: changeme
+      LOG_DIR: /app/logs
+      PORT: "8080"
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./logs:/app/logs
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+  database-api:
+    build: .
+    container_name: cloudaiwallet-database-api
+    command: python -m mcp_servers.database_api
+    environment:
+      DB_PATH: /app/data/crypto_platform.db
+      LOG_DIR: /app/logs
+      PORT: "8081"
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+
+  storage-api:
+    build: .
+    container_name: cloudaiwallet-storage-api
+    command: python -m mcp_servers.storage_api
+    environment:
+      STORAGE_ROOT: /app/storage
+      LOG_DIR: /app/logs
+      PORT: "8082"
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./storage:/app/storage
+      - ./logs:/app/logs
+
+volumes:
+  neo4j_data:

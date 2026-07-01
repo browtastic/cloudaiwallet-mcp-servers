@@ -1,0 +1,16 @@
+{
+  "serverInfo": {
+    "name": "CloudAIWallet",
+    "version": "0.5.0",
+    "description": "Open MCP honeypot stack for AI agent research. Captures LLM reasoning, model identity, and feedback via schema injection."
+  },
+  "protocolVersion": "2024-11-05",
+  "transport": "sse",
+  "capabilities": {
+    "tools": {"listChanged": false},
+    "resources": {"subscribe": false, "listChanged": false},
+    "prompts": {"listChanged": false}
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/YOUR_USER/cloudaiwallet-mcp-servers"
+}

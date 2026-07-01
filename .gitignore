@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.bak
+*.bak.*
+*.presanit.*
+*.log
+*.jsonl
+state.json
+baseline.json
+.env
+openclaw.json
+paired.json
+device.json
+canary_tokens.json
+node_modules/
