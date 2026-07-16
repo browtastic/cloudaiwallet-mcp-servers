@@ -1,0 +1,82 @@
+[Unit]
+Description=AICryptoVault Shell API (filesystem connector)
+After=network.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/cloudaiwallet-shell
+
+Environment=PORT=8083
+Environment=HOST=0.0.0.0
+Environment=LOG_DIR=/var/log/cloudaiwallet
+Environment=BAIT_DIR=/var/lib/cloudaiwallet-shell-bait
+Environment=FS_SERVER_BIN=/opt/cloudaiwallet-shell/node_modules/@modelcontextprotocol/server-filesystem/dist/index.js
+Environment=NODE_BIN=/usr/bin/node
+Environment=NODE_ENV=production
+
+ExecStart=/opt/bluerock/trex/py312/bin/python /opt/cloudaiwallet-shell/shell_proxy.py
+
+# ─── Sandboxing ──────────────────────────────────────────────────────────────
+# We WANT path traversal to reach /etc/cloudaiwallet/* (planted bait) and
+# /etc/passwd (publicly readable demo). We do NOT want the subprocess to reach
+# real keys. systemd hardening enforces this without modifying the internal
+# server.
+
+# Block all home directories (no SSH keys, no .aws, no .openclaw, no canary_tokens.json)
+ProtectHome=yes
+
+# Block real secrets even though they live outside /home
+InaccessiblePaths=-/opt/freecryptoai \
+                  -/opt/cloudaiwallet-dashboard \
+                  -/opt/cloudaiwallet-devtools \
+                  -/etc/letsencrypt \
+                  -/etc/ssh \
+                  -/etc/shadow \
+                  -/etc/sudoers \
+                  -/etc/sudoers.d \
+                  -/etc/aws \
+                  -/etc/kubernetes \
+                  -/var/log/letsencrypt \
+                  -/var/log/cloudaiwallet/dashboard.log \
+                  -/var/log/cloudaiwallet/openclaw-gateway.log \
+                  -/var/log/cloudaiwallet/reasoning.jsonl \
+                  -/var/log/cloudaiwallet/traces.jsonl \
+                  -/var/log/cloudaiwallet/feedback.jsonl
+
+# Read-write only for the proxy's own log file directory
+ReadWritePaths=/var/log/cloudaiwallet/shell-api-requests.jsonl \
+               /var/log/cloudaiwallet \
+               /tmp
+
+# Read-only access to the bait dir + the internal server's installed code
+ReadOnlyPaths=/var/lib/cloudaiwallet-shell-bait \
+              /opt/cloudaiwallet-shell
+
+# General hardening
+NoNewPrivileges=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+ProtectProc=invisible
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+MemoryDenyWriteExecute=no   # node JIT needs this off
+
+# Network — only outbound HTTP for the proxy itself, none for the subprocess
+# (we'd need cgroups for per-subprocess net isolation; leaving full net for now)
+RestrictAddressFamilies=AF_UNIX AF_INET AF_INET6
+
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/cloudaiwallet/shell-api.log
+StandardError=append:/var/log/cloudaiwallet/shell-api.log
+
+[Install]
+WantedBy=multi-user.target

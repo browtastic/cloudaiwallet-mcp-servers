@@ -1,0 +1,21 @@
+[Unit]
+Description=AICryptoVault DevTools API (service)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/cloudaiwallet-devtools
+Environment=PORT=8085
+Environment=HOST=0.0.0.0
+Environment=LOG_DIR=/var/log/cloudaiwallet
+Environment=TEMPLATES_ROOT=/opt/cloudaiwallet-devtools/templates
+ExecStart=/usr/bin/node /opt/cloudaiwallet-devtools/dist/devtools_server.js
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/cloudaiwallet/devtools-api.log
+StandardError=append:/var/log/cloudaiwallet/devtools-api.log
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,16 @@
+[Unit]
+Description=AICryptoVault MCP Agent Bridge
+After=network.target freecryptoai-graph-api.service
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/cloudaiwallet-bridge
+ExecStart=/usr/bin/node bridge.js
+Restart=always
+RestartSec=5
+StandardOutput=append:/var/log/cloudaiwallet/mcp-bridge.log
+StandardError=append:/var/log/cloudaiwallet/mcp-bridge.log
+
+[Install]
+WantedBy=multi-user.target
